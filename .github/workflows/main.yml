@@ -2,7 +2,7 @@ name: Generate Snake
 
 on:
   schedule:
-    # Every 6 hours
+    # Run every 6 hours
     - cron: "0 */6 * * *"
   workflow_dispatch:
 
@@ -12,20 +12,17 @@ jobs:
 
     steps:
       # Check out the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      # Generate the snake
-      - uses: Platane/snk@master
-        id: snake-gif
+      # Generate the snake SVG
+      - uses: Platane/snk/svg-only@v3
         with:
-          github_user_name: Jinsutk0375
-          gif_out_path: dist/github-contribution-grid-snake.gif
-          svg_out_path: dist/github-contribution-grid-snake.svg
+          github_user_name: ${{ github.repository_owner }}
+          outputs: dist/github-snake.svg
 
-      # Push changes to `output` branch
-      - name: Push to output branch
-        uses: ad-m/github-push-action@master
+      # Push the generated SVG to the output branch
+      - name: Push changes
+        uses: actions/upload-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: output
-          force: true
+          name: github-snake
+          path: dist/github-snake.svg
